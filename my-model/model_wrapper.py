@@ -4,8 +4,7 @@ import sys
 from pathlib import Path
 
 from mlserver import MLModel
-from mlserver.codecs import StringCodec
-from mlserver.types import InferenceRequest, InferenceResponse, ResponseOutput
+from mlserver.types import InferenceRequest, InferenceResponse, RequestOutput
 
 # Super hacky way to load codec. Don't do this in prod.
 # Trying to relative import will result in import error:
@@ -50,14 +49,14 @@ class MyModel(MLModel):
         return await super().load()
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
-        print('--- parameters ---')
-        print(payload.parameters)
-        print(f'Request content_type: {payload.parameters.content_type}')
-
-        for inp in payload.inputs:
-            print(self.decode(inp))
-            print(self.decode(inp, default_codec=StringCodec))
-            print(self.decode(inp, default_codec=ModelWrapperCodec))
+        # print('--- parameters ---')
+        # print(f'Request content_type: {payload.parameters.content_type}')
 
         outputs = []
+        for inp in payload.inputs:
+            decoded = self.decode(inp, default_codec=ModelWrapperCodec)
+            results = self._model_func(decoded[0])  # TODO: this is returning as list of lists. fix this
+            output = RequestOutput(name="results")
+            outputs.append(self.encode(results, output, default_codec=ModelWrapperCodec))
+
         return InferenceResponse(model_name=self.name, outputs=outputs)

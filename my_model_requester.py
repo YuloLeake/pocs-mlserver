@@ -1,7 +1,7 @@
 import json
 import requests
 
-endpoint = "http://localhost:8080/v2/models/my-model/versions/v0.0.1/infer"
+model = "http://localhost:8080/v2/models/my-model/versions/v0.0.1"
 
 inputs = [
     {
@@ -23,9 +23,12 @@ inputs = [
         'petal width (cm)': 1.3,
     },
 ]
+
+# response = requests.post(f'http://localhost:8080/v2/repository/index', json={})
+
+# exit(0)
+
 inputs_bytes = json.dumps(inputs)
-print(f"full request:")
-print(inputs_bytes)
 
 inference_request = {
     "inputs": [
@@ -37,8 +40,10 @@ inference_request = {
         }
     ]
 }
+print(f"full request:")
+print(inference_request)
 
-response = requests.post(endpoint, json=inference_request)
+response = requests.post(f'{model}/infer', json=inference_request)
 
 print()
 print(f"full response:")

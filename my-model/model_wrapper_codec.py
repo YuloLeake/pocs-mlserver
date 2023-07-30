@@ -1,7 +1,7 @@
 import json
 from typing import Any, List
 
-from mlserver.codecs import InputCodec, register_input_codec, DecodedParameterName
+from mlserver.codecs import InputCodec, register_input_codec
 from mlserver.codecs.lists import is_list_of, as_list
 from mlserver.types import RequestInput, ResponseOutput, Parameters
 
@@ -13,6 +13,7 @@ class ModelWrapperCodec(InputCodec):
 
     @classmethod
     def can_encode(cls, payload: Any) -> bool:
+        print("can_encode")
         return is_list_of(payload, bytes)
 
     @classmethod
@@ -22,19 +23,15 @@ class ModelWrapperCodec(InputCodec):
         payload: List[bytes],
         **kwargs
     ) -> ResponseOutput:
-        print('encode_output')
-        print(payload)
-        print('/encode_output')
-        print()
-
-        outputs = []
-        shape = [len(outputs), 1]
+        """Gets called by MLServer self.encode()."""
+        data = list(map(json.dumps, as_list(payload)))
+        shape = [-1, len(data)]
 
         return ResponseOutput(
             name=name,
-            shape=payload.size,
+            shape=shape,
             datatype="BYTES",
-            data=outputs,
+            data=data,
             parameters=Parameters(content_type=cls.ContentType),
         )
 
@@ -48,7 +45,7 @@ class ModelWrapperCodec(InputCodec):
 
     @classmethod
     def decode_input(cls, request_input: RequestInput) -> List[bytes]:
-        """Gets called by MLServer."""
+        """Gets called by MLServer self.decode()."""
         data = request_input.data.__root__
         data = list(map(json.loads, as_list(data)))
         return data
