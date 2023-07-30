@@ -1,5 +1,4 @@
 import json
-import orjson
 import requests
 
 endpoint = "http://localhost:8080/v2/models/my-model/versions/v0.0.1/infer"
@@ -25,7 +24,6 @@ inputs = [
     },
 ]
 inputs_bytes = json.dumps(inputs)
-# inputs_bytes = orjson.dumps(inputs).decode('utf-8')
 print(f"full request:")
 print(inputs_bytes)
 
@@ -40,7 +38,6 @@ inference_request = {
     ]
 }
 
-# response = requests.post(endpoint, data=inference_request, headers={"Content-Type": "application/json"})
 response = requests.post(endpoint, json=inference_request)
 
 print()

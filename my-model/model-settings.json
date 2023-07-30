@@ -1,0 +1,10 @@
+{
+    "name": "my-model",
+    "implementation": "model_wrapper.MyModel",
+    "parameters": {
+        "content_type": "my-model",
+        "uri": "./my-model-artifacts",
+        "version": "v0.0.1",
+        "extra": {}
+    }
+}
