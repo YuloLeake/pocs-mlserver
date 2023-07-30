@@ -1,0 +1,8 @@
+{
+    "name": "basic-iris",
+    "implementation": "mlserver_sklearn.SKLearnModel",
+    "parameters": {
+        "uri": "./artifacts/iris.joblib",
+        "version": "v0.0.1"
+    }
+}
